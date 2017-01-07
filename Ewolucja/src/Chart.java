@@ -4,6 +4,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.ui.ApplicationFrame;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -19,8 +20,13 @@ public class Chart extends ApplicationFrame
 {
 	private static final long serialVersionUID = 1L;
 	
+	Model model;
+	Controller controller;
+	
 	JFrame frame = new JFrame("Coœ tam");
-	JPanel chartPanel = new JPanel();
+	JPanel panel = new JPanel();
+	JPanel chartPanelMiLambda = new JPanel();
+	JButton button1, button2, b;
 	
 	final XYSeries fitness = new XYSeries("Fitness");//jak chcesz dodac druga funkcje to tu 
 	final XYSeries seriesX = new XYSeries("XY");
@@ -32,19 +38,46 @@ public class Chart extends ApplicationFrame
     JLabel labelz = new JLabel("z");
     JLabel labelf = new JLabel("f");
 	
-	Chart(String applicationTitle, String chartTitle, String buttonTitle)
+	Chart(String applicationTitle, String chartTitle)
    {
       super(applicationTitle);
-     
-      CreateFrame(createLineChart(chartTitle, "i", "f(i)", fitness), 
-    		  					  createScatterPlot("", "Y", "X", seriesX), 
-    		  					  createScatterPlot("", "Y", "Z", seriesZ), 
-    		  					  buttonTitle);
       
-      Frame(frame, chartPanel);
+      textDecoration(16.0f, 5);
+      
+      
+      
+      button1 = new JButton("1+1");
+      button2 = new JButton("(mi, lambda)");
+      
+      JPanel textPanel = new JPanel();
+      textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+      
+      panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+      
+      JPanel controlPanel = new JPanel();
+      controlPanel.setLayout(new FlowLayout());    
+      controlPanel.add(button1);
+      controlPanel.add(button2);
+      
+      panel.add(textPanel);
+      panel.add(controlPanel);      
+      Frame(frame, panel);
    }
-	 
-	private JFreeChart createLineChart(String chartTitle, String x, String y, XYSeries series){
+	public void addController(Controller controller){
+		System.out.println("View      : adding controller");
+		this.controller = controller;
+		
+		button1.addActionListener(controller);	//need controller before adding it as a listener 
+		button2.addActionListener(controller);
+	}
+	public void addModel(Model m){
+			this.model = m;
+	}
+	public void update(){
+
+	}
+	
+	public JFreeChart createLineChart(String chartTitle, String x, String y, XYSeries series){
 		final XYSeriesCollection dataset = new XYSeriesCollection();
 	      dataset.addSeries(series);
 	      
@@ -52,7 +85,7 @@ public class Chart extends ApplicationFrame
 	         chartTitle, x, y, dataset, PlotOrientation.VERTICAL, true, true, false);
 	      return xylineChart;
 	}
-	private JFreeChart createScatterPlot(String chartTitle, String x, String y, XYSeries series){
+	public JFreeChart createScatterPlot(String chartTitle, String x, String y, XYSeries series){
 		final XYSeriesCollection dataset = new XYSeriesCollection();
 	      dataset.addSeries(series);
 	      
@@ -60,9 +93,10 @@ public class Chart extends ApplicationFrame
 	         chartTitle, x, y, dataset, PlotOrientation.VERTICAL, true, true, false);
 	      return xylineChart;
 	}
-	private void CreateFrame(JFreeChart xylineChart, JFreeChart chartX, JFreeChart chartZ, String buttonTitle){
-		  textDecoration(16.0f, 5);
-	      
+	private void CreateFrame(JFreeChart xylineChart, JFreeChart chartXYZ, JFreeChart chartZ, String buttonTitle, JPanel panel){
+		  b = new JButton(buttonTitle);
+		  b.addActionListener(controller);
+		  
 	      JPanel textPanel = new JPanel();
 	      textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
 	      textPanel.add(labelx);
@@ -70,23 +104,46 @@ public class Chart extends ApplicationFrame
 	      textPanel.add(labelz);
 	      textPanel.add(labelf);
 	      
-	      chartPanel.setLayout(new BoxLayout(chartPanel, BoxLayout.Y_AXIS));
+	      panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 	      
 	      JPanel controlPanel = new JPanel();
 	      controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
 	      controlPanel.add(textPanel);
-	      controlPanel.add(add(new JButton(new Controller(buttonTitle))));
+	      controlPanel.add(b);
 
-	      chartPanel.add(ChartPanel(xylineChart, controlPanel));
-	      chartPanel.add(XYZChartPanel(chartX));
-	      chartPanel.add(XYZChartPanel(chartZ));
+	      panel.add(ChartPanel(xylineChart, controlPanel));
+	      panel.add(XYZChartPanel(chartXYZ));
+	      panel.add(XYZChartPanel(chartZ));
+	      
+	      textDecoration(16.0f, 5);
 	}
 	
-	private void Frame(JFrame frame, JPanel chartPanel ){
+	public void createMiLambda(){
+		CreateFrame(createLineChart("(mi, lambda)", "i", "f(i)", fitness), 
+				  createScatterPlot("", "Y", "X", seriesX), 
+				  createScatterPlot("", "Y", "Z", seriesZ), 
+				  "Update (mi, lambda)", chartPanelMiLambda);
+		frame.add(chartPanelMiLambda, BorderLayout.CENTER);
+		frame.pack();
+		frame.setLocation(100, 0);
+		
+	}
+	public void createJedenPludJeden(){
+		CreateFrame(createLineChart("(1+1)", "i", "f(i)", fitness), 
+				  createScatterPlot("", "Y", "X", seriesX), 
+				  createScatterPlot("", "Y", "Z", seriesZ), 
+				  "update (1+1)", chartPanelMiLambda);
+		frame.add(chartPanelMiLambda, BorderLayout.CENTER);
+		frame.pack();
+	}
+	
+	
+	private void Frame(JFrame frame, JPanel chartPanel){
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    frame.add(chartPanel, BorderLayout.CENTER);
 	    frame.pack();
 	    frame.setLocationRelativeTo(null);
+	    //frame.setSize(250, 200);
 	    frame.setVisible(true);
 	}
 	
