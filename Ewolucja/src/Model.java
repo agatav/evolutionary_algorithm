@@ -5,59 +5,42 @@ public class Model
 {
 	ArrayList<Population> byt1;
 	Random generator;
+	boolean milambda;
 	
-	Model()
+	//aktualne dla mi,lambda
+	Model(int mi, int lambda)
 	{
 		generator = new Random();
 		byt1 = new ArrayList<Population>();
-		byt1.add(new Population(generator));
+		milambda = true;
+		byt1.add(new Population(mi,lambda,generator));
 	}
-	//u¿ywaj tego - drugi bêdzie sta³y - w tym mo¿esz ustawiæ jaki maj¹ byæ te wspó³czynniki z algorytmu
-	Model(double ratio,double multiplier1, double multiplier2, int mi, int lambda)
+	
+	//aktualne dla 1+1
+	Model(int between, double multiplier1, double multiplier2)
 	{
 		generator = new Random();
 		byt1 = new ArrayList<Population>();
-		byt1.add(new Population(ratio,multiplier1,multiplier2,mi,lambda,generator));
+		milambda = false;
+		byt1.add(new Population(between,multiplier1,multiplier2,generator));
 	}
 	
 	private void start()
 	{
-		System.out.println(byt1.get(0).getBest().getFitness());
-		for (int i=0;i<100;i++)
-		{
-			addGen();
-		}
-		
-		
-		System.out.println("4 generacje");
-		int i=0;
-		for (Evolving<Double> e : getBests())
-		{	
-			System.out.print(i++);
-			System.out.println(e.getFitness());
-		}
-		
-		System.out.println("cala 1 generacja");
-		System.out.print(getBests().get(getBests().size()-1).getArgs().get(0));
-		System.out.print("  ");
-		System.out.print(getBests().get(getBests().size()-1).getArgs().get(1));
-		System.out.print("  ");
-		System.out.print(getBests().get(getBests().size()-1).getArgs().get(2));
-		System.out.print("  ");
-		System.out.print(getBests().get(getBests().size()-1).getFitness());
-
+		addGen();
+		System.out.println("oki - przetestuj :P");
 	}
 	
 	//dodaje generacjê
 	public void addGen()
-	{//TODO using createNewGen()
+	{
 		byt1.add(new Population(generator, byt1.get(byt1.size()-1)));
 	}
 	
 	//zwraca listê najlepszych z generacji
-	public ArrayList<Evolving<Double>> getBests()
+	public ArrayList<Evolving<ProjectEvolvingArgs>> getBests()
 	{
-		ArrayList<Evolving<Double>> bests = new ArrayList<Evolving<Double>>();
+		ArrayList<Evolving<ProjectEvolvingArgs>> bests = new ArrayList<Evolving<ProjectEvolvingArgs>>();
 		for (Population a : byt1)
 		{
 			bests.add(a.getBest());
@@ -66,7 +49,7 @@ public class Model
 	}
 	
 	//zwraca 1 generacjê - jeœli nie ma to null
-	public ArrayList<Evolving<Double>> getPop(int nr)
+	public ArrayList<Evolving<ProjectEvolvingArgs>> getPop(int nr)
 	{
 		if (byt1.size()<=nr)
 			return null;		//jak nie ma takiej generacji to zwraca puste
@@ -75,18 +58,39 @@ public class Model
 	}
 	
 	//zwraca najlepszego w generacji
-	public Evolving<Double> getBest(int nr)
+	public Evolving<ProjectEvolvingArgs> getBest(int nr)
 	{
 		if (byt1.size()<=nr)
 			return null;
 		return byt1.get(nr).getBest();
+	}
+	
+	//zmienia mi i lambde
+	public boolean update(int mi, int lambda)
+	{
+		if(!milambda)
+			return false;
+		byt1.clear();
+		byt1.add(new Population(mi,lambda,generator));
+		return true;
+	}
+	
+	//zmienia m, c1 i c2
+	public boolean update(int between, double multiplier1, double multiplier2)
+	{
+		if(milambda)
+			return false;
+		byt1.clear();
+		byt1.add(new Population(between,multiplier1,multiplier2,generator));
+		return true;
+		
 	}
 
 	
 	
 	public static void main(String[] args)
 	{
-		Model model = new Model();
+		Model model = new Model(10,1.2,0.8);
 		model.start();
 		
 		return;
