@@ -14,13 +14,6 @@ public class Controller extends JFrame implements ActionListener{
 
 	}
 
-	public Controller(String name) {
-	    super("Update  " + name);
-	}
-
-	public void addModel(Model m){
-		this.model = m;
-	}
 
 	public void addView(Chart v){
 		this.chart = v;
@@ -30,16 +23,24 @@ public class Controller extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == chart.button1){
 			chart.panel.setVisible(false);
+			model = new Model(10,1.2,0.8);
 			chart.start(model);
-			chart.createJedenPludJeden();
+			chart.create1Plus1();
 		}
 		if(e.getSource() == chart.button2){
 			chart.panel.setVisible(false);
+			model = new Model(20, 140);
 			chart.start(model);
 			chart.createMiLambda();
 		}
-		if(e.getSource() == chart.b){
-			chart.update();
+		if(e.getSource() == chart.bMiLambda){
+			chart.update(20, 140);
+			chart.start(model);
 		}
+		if(e.getSource() == chart.b1plus1){
+			chart.update(10,1.2,0.8);
+			chart.start(model);
+		}
+
 	}
 }

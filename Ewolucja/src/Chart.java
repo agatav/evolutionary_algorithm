@@ -26,7 +26,7 @@ public class Chart extends ApplicationFrame
 	JFrame frame = new JFrame("Coœ tam");
 	JPanel panel = new JPanel();
 	JPanel chartPanelMiLambda = new JPanel();
-	JButton button1, button2, b;
+	JButton button1, button2, bMiLambda, b1plus1;
 	
 	final XYSeries fitness = new XYSeries("Fitness");//jak chcesz dodac druga funkcje to tu 
 	final XYSeries seriesX = new XYSeries("XY");
@@ -43,8 +43,6 @@ public class Chart extends ApplicationFrame
       super(applicationTitle);
       
       textDecoration(16.0f, 5);
-      
-      
       
       button1 = new JButton("1+1");
       button2 = new JButton("(mi, lambda)");
@@ -64,17 +62,17 @@ public class Chart extends ApplicationFrame
       Frame(frame, panel);
    }
 	public void addController(Controller controller){
-		System.out.println("View      : adding controller");
 		this.controller = controller;
 		
 		button1.addActionListener(controller);	//need controller before adding it as a listener 
 		button2.addActionListener(controller);
 	}
-	public void addModel(Model m){
-			this.model = m;
-	}
-	public void update(){
 
+	public void update(int mi, int lambda){
+		if (model.update(mi, lambda)) System.out.println("true");
+	}
+	public void update(int between, double multiplier1, double multiplier2){
+		if (model.update(between, multiplier1, multiplier2)) System.out.println("true");
 	}
 	
 	public JFreeChart createLineChart(String chartTitle, String x, String y, XYSeries series){
@@ -88,13 +86,14 @@ public class Chart extends ApplicationFrame
 	public JFreeChart createScatterPlot(String chartTitle, String x, String y, XYSeries series){
 		final XYSeriesCollection dataset = new XYSeriesCollection();
 	      dataset.addSeries(series);
+
 	      
 	      JFreeChart xylineChart = ChartFactory.createScatterPlot(//parametry wykresu
 	         chartTitle, x, y, dataset, PlotOrientation.VERTICAL, true, true, false);
 	      return xylineChart;
 	}
-	private void CreateFrame(JFreeChart xylineChart, JFreeChart chartXYZ, JFreeChart chartZ, String buttonTitle, JPanel panel){
-		  b = new JButton(buttonTitle);
+	private void CreateFrame(JFreeChart xylineChart, JFreeChart chartX, JFreeChart chartZ, JPanel panel, Controller controller, JButton b){
+		  this.controller = controller;
 		  b.addActionListener(controller);
 		  
 	      JPanel textPanel = new JPanel();
@@ -112,29 +111,32 @@ public class Chart extends ApplicationFrame
 	      controlPanel.add(b);
 
 	      panel.add(ChartPanel(xylineChart, controlPanel));
-	      panel.add(XYZChartPanel(chartXYZ));
+	      panel.add(XYZChartPanel(chartX));
 	      panel.add(XYZChartPanel(chartZ));
 	      
 	      textDecoration(16.0f, 5);
 	}
 	
 	public void createMiLambda(){
+		  bMiLambda = new JButton("Update (mi, lambda)");
 		CreateFrame(createLineChart("(mi, lambda)", "i", "f(i)", fitness), 
 				  createScatterPlot("", "Y", "X", seriesX), 
-				  createScatterPlot("", "Y", "Z", seriesZ), 
-				  "Update (mi, lambda)", chartPanelMiLambda);
+				  createScatterPlot("", "Y", "Z", seriesZ),
+				  chartPanelMiLambda, controller, bMiLambda);
 		frame.add(chartPanelMiLambda, BorderLayout.CENTER);
 		frame.pack();
 		frame.setLocation(100, 0);
 		
 	}
-	public void createJedenPludJeden(){
+	public void create1Plus1(){
+		b1plus1 = new JButton("update (1+1)");
 		CreateFrame(createLineChart("(1+1)", "i", "f(i)", fitness), 
 				  createScatterPlot("", "Y", "X", seriesX), 
 				  createScatterPlot("", "Y", "Z", seriesZ), 
-				  "update (1+1)", chartPanelMiLambda);
+				  chartPanelMiLambda, controller, b1plus1);
 		frame.add(chartPanelMiLambda, BorderLayout.CENTER);
 		frame.pack();
+		frame.setLocation(100, 0);
 	}
 	
 	
@@ -143,7 +145,6 @@ public class Chart extends ApplicationFrame
 	    frame.add(chartPanel, BorderLayout.CENTER);
 	    frame.pack();
 	    frame.setLocationRelativeTo(null);
-	    //frame.setSize(250, 200);
 	    frame.setVisible(true);
 	}
 	
@@ -166,23 +167,32 @@ public class Chart extends ApplicationFrame
 	
 	protected void start(Model model)
 	{ 
-			for (int i=0;i<100;i++)
+		this.model = model;
+		fitness.clear();
+		seriesX.clear();
+		seriesZ.clear();
+		for (int i=0;i<100;i++)
 			{
 				model.addGen();
 			}
 			int i=0;
-			for (Evolving<Double> e : model.getBests())
+			for (Evolving<ProjectEvolvingArgs> e : model.getBests())
 			{				
-				createDataset(i++, e.getFitness());
-				createDatasetXYZ(e.getArgs().get(1), e.getArgs().get(0), seriesX);
-				createDatasetXYZ(e.getArgs().get(1), e.getArgs().get(2), seriesZ);				
+				createDataset(i++, e.getFitness());			
 			}
-			setText("x", model.getBests().get(model.getBests().size()-1).getArgs().get(0), labelx);
-			setText("y", model.getBests().get(model.getBests().size()-1).getArgs().get(1), labely);
-			setText("z", model.getBests().get(model.getBests().size()-1).getArgs().get(2), labelz);
+			i=0;
+			for (Evolving<ProjectEvolvingArgs> e : model.getPop(50))//0 zmienia sie
+			{				
+				//dla i=0 inny kolor
+				createDatasetXYZ(e.getArgs().getY(), e.getArgs().getX(), seriesX);//model.getPop()
+				createDatasetXYZ(e.getArgs().getY(), e.getArgs().getZ(), seriesZ);	//e.getArgs().getX() (Y, Z)	
+			}
+			setText("x", model.getBests().get(model.getBests().size()-1).getArgs().getX(), labelx);
+			setText("y", model.getBests().get(model.getBests().size()-1).getArgs().getY(), labely);
+			setText("z", model.getBests().get(model.getBests().size()-1).getArgs().getZ(), labelz);
 			setText("Funkcja", model.getBests().get(model.getBests().size()-1).getFitness(), labelf);
 	}
-	
+		
 	private void createDataset(int i, double fit)
     {          
        fitness.add(i , fit); //i fitness
