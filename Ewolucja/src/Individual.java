@@ -1,112 +1,81 @@
 import java.lang.Math;
 import java.util.Random;
-import java.util.ArrayList;
 
-public class Individual implements Evolving<Double>
+public class Individual implements Evolving<ProjectEvolvingArgs>
 {
-	Double x,y,z;
+	ProjectEvolvingArgs args;
 	Double fitness;
 	int generacja;
-	Double sigma[];
 	
 	
 	//testowe i pierwsze
 	public Individual(Random generator)
 	{
-		x = generator.nextDouble() * 40 - 20;
-		y = generator.nextDouble() * 40 - 20;
-		z = generator.nextDouble() * 40 - 20;
-		sigma = new Double[3];
+		double x = generator.nextDouble() * 40 - 20;
+		double y = generator.nextDouble() * 40 - 20;
+		double z = generator.nextDouble() * 40 - 20;
+		double sigma[] = new double[3];
 		sigma[0] = generator.nextDouble() *3;
 		sigma[1] = generator.nextDouble() *3;
 		sigma[2] = generator.nextDouble() *3;
 		generacja = 0;
+		args = new ProjectEvolvingArgs(x,y,z,sigma[0],sigma[1],sigma[2]);
 		fitness = fitnessCalc();
 	}
 	
-	public Individual(Double[] init, int gen, Double[] s)
+	public Individual(ProjectEvolvingArgs args, int gen)
 	{
-		x = init[0];
-		y = init[1];
-		z = init[2];
-		sigma = new Double[3];
-		sigma[0] = s[0];
-		sigma[1] = s[0];
-		sigma[2] = s[0];
+		this.args = args;
 		generacja = gen;
 		fitness = fitnessCalc();
 	}
 	
 	private double fitnessCalc()
 	{
-		return 0.01*x*x + 0.02*y*y + 0.03*z*z - Math.cos(x)*Math.cos(y)*Math.cos(z);
+		return 0.01*args.getX()*args.getX()
+				+ 0.02*args.getY()*args.getY()
+				+ 0.03*args.getZ()*args.getZ()
+				- Math.cos(args.getX()) * Math.cos(args.getY()) * Math.cos(args.getZ());
 	}
 	
 	public	double getX()
 	{
-		return x;
+		return args.getX();
 	}
 	public double getY()
 	{
-		return y;
+		return args.getY();
 	}
 	public double getZ()
 	{
-		return z;
+		return args.getZ();
 	}
 	public double getFitness()
 	{
 		return fitness;
 	}
-	public ArrayList<Double> getArgs()
+	public ProjectEvolvingArgs getArgs()
 	{
-		ArrayList<Double> a = new ArrayList<Double>();
-		a.add(x); a.add(y); a.add(z);
-		return a;
+		return args;
 	}
 	public int getGen()
 	{
 		return generacja;
 	}
 	
-	public Double getSigma(int i)
+	public double getSigma(int i)
 	{
 		if (i < 0 || i > 2)
-			return null;
+			return 0;
+		double sigma[] = new double[3];
+		sigma[0] = args.getSigmaX();
+		sigma[1] = args.getSigmaY();
+		sigma[2] = args.getSigmaZ();
 		return sigma[i];
 	}
-	public Individual makeNew(Individual parent,Random generator)
-	{//TODO
-		Double newVal[] = new Double[3];
-		Double newSigma[] = new Double[3];
-		double a = generator.nextDouble();
-		
-		newVal[0] = a*x+(1-a)*parent.getX();
-		newVal[1] = a*y+(1-a)*parent.getY();
-		newVal[2] = a*z+(1-a)*parent.getZ();
-		
-		newSigma[0] = a*sigma[0] + (1-a)*parent.getSigma(0);
-		newSigma[1] = a*sigma[1] + (1-a)*parent.getSigma(1);
-		newSigma[2] = a*sigma[2] + (1-a)*parent.getSigma(2);
-		
-		double tau,tauprime;
-		tau = 1/Math.sqrt(2*Math.sqrt(3));
-		tauprime = 1/Math.sqrt(6);
-		
-		for (int i=0;i<3;i++)
-		{
-			newSigma[i] = newSigma[i]*Math.exp(tau*generator.nextGaussian()
-												+
-												tauprime*generator.nextGaussian());
-			newVal[i] = newVal[i] + newSigma[i]*generator.nextGaussian();
-			if (newVal[i]>20)
-				newVal[i] = 20.0;
-			if (newVal[i]<-20)
-				newVal[i] = -20.0;
-		}
-		
-		Individual next;
-		next = new Individual(newVal, generacja+1,newSigma);
-		return next;
+	public Evolving<ProjectEvolvingArgs> create(ProjectEvolvingArgs args)
+	{
+		Individual nowy = new Individual(args,0);
+		return nowy;
 	}
 }
