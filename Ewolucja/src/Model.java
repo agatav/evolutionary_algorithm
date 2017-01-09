@@ -31,13 +31,13 @@ public class Model
 		System.out.println("oki - przetestuj :P");
 	}
 	
-	//dodaje generacjê
+	//dodaje generacjÃª
 	public void addGen()
 	{
 		byt1.add(new Population(generator, byt1.get(byt1.size()-1)));
 	}
 	
-	//zwraca listê najlepszych z generacji
+//zwraca listê najlepszych z generacji
 	public ArrayList<Evolving<ProjectEvolvingArgs>> getBests()
 	{
 		ArrayList<Evolving<ProjectEvolvingArgs>> bests = new ArrayList<Evolving<ProjectEvolvingArgs>>();
@@ -48,7 +48,7 @@ public class Model
 		return bests;
 	}
 	
-	//zwraca 1 generacjê - jeœli nie ma to null
+//zwraca 1 generacjê - jeœli nie ma to null
 	public ArrayList<Evolving<ProjectEvolvingArgs>> getPop(int nr)
 	{
 		if (byt1.size()<=nr)
