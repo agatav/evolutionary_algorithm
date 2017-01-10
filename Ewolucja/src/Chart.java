@@ -16,6 +16,8 @@ import javax.swing.JTextField;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeriesCollection; 
 
 public class Chart extends ApplicationFrame 
@@ -24,19 +26,23 @@ public class Chart extends ApplicationFrame
 	
 	Model model;
 	Controller controller;
+	JFreeChart chartX, chartZ;
 	
-	JFrame frame = new JFrame("Algorytm ewolucyjny");
+	JFrame frame = new JFrame("Evolution algorithm");
 	JPanel panel = new JPanel();
 	JPanel chartPanelMiLambda = new JPanel();
 	JButton button1, button2, bMiLambda, b1plus1, prev, next, submit;
 	
-	final XYSeries fitness = new XYSeries("Fitness");//jak chcesz dodac druga funkcje to tu 
+	/*funkcje na wykresach-> fitness, punkty generacji, punkt najlepszy, empty->ustawia skale wykresu [-20,20]*/
+	final XYSeries fitness = new XYSeries("Fitness"); 
 	final XYSeries seriesX = new XYSeries("XY");
 	final XYSeries seriesZ = new XYSeries("ZY");
 	final XYSeries bestX = new XYSeries("best");
 	final XYSeries bestZ = new XYSeries("best");
+	final XYSeries emptyX = new XYSeries("");
+	final XYSeries emptyZ = new XYSeries("");
 
-	/*pole do tekstu x, y, z, funkcji*/
+	/*pola do tekstu x, y, z, funkcji, generacji, parametrow funkcji*/
 	JLabel labelx = new JLabel("x");
     JLabel labely = new JLabel("y");
     JLabel labelz = new JLabel("z");
@@ -45,6 +51,7 @@ public class Chart extends ApplicationFrame
     JLabel labelAlg = new JLabel("");
 	JLabel labelEmpty = new JLabel(" ");
 	JLabel labelEmpty2 = new JLabel(" ");
+	/*pole do wpisywania generacji i parametrow*/
     JTextField whichGen, mi, lambda, c1, c2, m;
 	
 	Chart(String applicationTitle, String chartTitle)
@@ -70,6 +77,7 @@ public class Chart extends ApplicationFrame
       panel.add(controlPanel);      
       Frame(frame, panel);
    }
+	
 	public void addController(Controller controller){
 		this.controller = controller;
 		
@@ -78,10 +86,10 @@ public class Chart extends ApplicationFrame
 	}
 
 	public void updateMiLambda(int mi, int lambda){
-		if (model.update(mi, lambda)) System.out.println("true");
+		if (model.update(mi, lambda));
 	}
 	public void update1plus1(int between, double multiplier1, double multiplier2){
-		if (model.update(between, multiplier1, multiplier2)) System.out.println("true");
+		if (model.update(between, multiplier1, multiplier2));
 	}
 	
 	public JFreeChart createLineChart(String chartTitle, String x, String y, XYSeries series){
@@ -92,16 +100,7 @@ public class Chart extends ApplicationFrame
 	         chartTitle, x, y, dataset, PlotOrientation.VERTICAL, true, true, false);
 	      return xylineChart;
 	}
-
-	public JFreeChart createScatterPlot(String chartTitle, String x, String y, XYSeries series, XYSeries best){
-		final XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(best);  
-		dataset.addSeries(series);
-	      
-	      JFreeChart xylineChart = ChartFactory.createScatterPlot(//parametry wykresu
-	         chartTitle, x, y, dataset, PlotOrientation.VERTICAL, true, true, false);
-	      return xylineChart;
-	}
+	/*panel z przyciskami next prev*/
 	private JPanel nextPrevPanel(boolean miLambda, Controller controller){
 		this.controller = controller;
 		if(miLambda){
@@ -120,14 +119,11 @@ public class Chart extends ApplicationFrame
 	      }
 		return new JPanel();
 	}
-	private JPanel textPanel(boolean miLambda){
+	/*panel z tekstem - parametry algorytmu, x, y, z, funkcja, generacja*/
+	private JPanel textPanel(){
 		JPanel textPanel = new JPanel();
 	      textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-	      if(miLambda){
-	    	  textPanel.add(labelAlg);
-	      }else{
-	    	  textPanel.add(labelAlg);
-	      }
+	      textPanel.add(labelAlg);
 	      textPanel.add(labelg);
 	      textPanel.add(labelEmpty);
 	      textPanel.add(labelx);
@@ -137,6 +133,7 @@ public class Chart extends ApplicationFrame
 	      textPanel.add(labelEmpty2);
 	      return textPanel;
 	}
+	/*pola do wpisywania parametry funkcji*/
 	private JPanel paramPanel(boolean miLambda){
 		JPanel panel = new JPanel();
 		panel.setMaximumSize(new Dimension(300, 30));
@@ -160,7 +157,6 @@ public class Chart extends ApplicationFrame
 			panel.add(c2);
 		}
 	      return panel;
-		
 	}
 	private void CreateFrame(JFreeChart xylineChart, JFreeChart chartX, JFreeChart chartZ, JPanel panel, Controller controller, JButton b, boolean miLambda){
 		  this.controller = controller;
@@ -170,7 +166,7 @@ public class Chart extends ApplicationFrame
 	      
 	      JPanel controlPanel = new JPanel();
 	      controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-	      controlPanel.add(textPanel(miLambda));
+	      controlPanel.add(textPanel());
 	      controlPanel.add(paramPanel(miLambda));
 	      controlPanel.add(b);
 
@@ -179,34 +175,58 @@ public class Chart extends ApplicationFrame
 	      panel.add(XYZChartPanel(chartX));
 	      panel.add(XYZChartPanel(chartZ));
 	}
-	
-	
+	/*okno z wykresem (mi,lambda)*/
 	public void createMiLambda(){
 		  bMiLambda = new JButton("Update (mi, lambda)");
 		  prev = new JButton("Prev");
 		  next = new JButton ("Next");
 		  submit = new JButton("Submit");
-		CreateFrame(createLineChart("(mi, lambda)", "i", "f(i)", fitness), 
-				  createScatterPlot("", "Y", "X", seriesX, bestX), 
-				  createScatterPlot("", "Y", "Z", seriesZ, bestZ),
-				  chartPanelMiLambda, controller, bMiLambda, true);
+		  
+		  final XYSeriesCollection datasetX = new XYSeriesCollection();
+		  datasetX.addSeries(bestX);  
+		  datasetX.addSeries(seriesX);
+		  datasetX.addSeries(emptyX);
+	      chartX = ChartFactory.createScatterPlot("", "X", "Y", datasetX, PlotOrientation.VERTICAL, true, true, false);
+	      
+	      final XYSeriesCollection datasetZ = new XYSeriesCollection();
+		  datasetZ.addSeries(bestZ);  
+		  datasetZ.addSeries(seriesZ);
+		  datasetZ.addSeries(emptyZ);
+	      chartZ = ChartFactory.createScatterPlot("", "X", "Y", datasetZ, PlotOrientation.VERTICAL, true, true, false);
+	          
+		CreateFrame(createLineChart("(mi, lambda)", "i", "f(i)", fitness),chartX, chartZ,
+				  		chartPanelMiLambda, controller, bMiLambda, true);
 		frame.add(chartPanelMiLambda, BorderLayout.CENTER);
+		frame.setPreferredSize(new Dimension(800, 750));
 		frame.pack();
 		frame.setLocation(100, 0);
 		
 	}
+	/*okno z wykresem (1+1)*/
 	public void create1Plus1(){
 		b1plus1 = new JButton("update (1+1)");
-		CreateFrame(createLineChart("(1+1)", "i", "f(i)", fitness), 
-				  createScatterPlot("", "Y", "X", seriesX, bestX), 
-				  createScatterPlot("", "Y", "Z", seriesZ, bestZ), 
+		
+		final XYSeriesCollection datasetX = new XYSeriesCollection();
+		  datasetX.addSeries(bestX);  
+		  datasetX.addSeries(seriesX);
+		  datasetX.addSeries(emptyX);
+	      chartX = ChartFactory.createScatterPlot("", "X", "Y", datasetX, PlotOrientation.VERTICAL, true, true, false);
+	      
+	      final XYSeriesCollection datasetZ = new XYSeriesCollection();
+		  datasetZ.addSeries(bestZ);  
+		  datasetZ.addSeries(seriesZ);
+		  datasetZ.addSeries(emptyZ);
+	      chartZ = ChartFactory.createScatterPlot("", "X", "Y", datasetZ, PlotOrientation.VERTICAL, true, true, false);
+	     
+		CreateFrame(createLineChart("(1+1)", "i", "f(i)", fitness), chartX, chartZ,
 				  chartPanelMiLambda, controller, b1plus1, false);
 		frame.add(chartPanelMiLambda, BorderLayout.CENTER);
+		frame.setPreferredSize(new Dimension(800, 750));
 		frame.pack();
 		frame.setLocation(100, 0);
 	}
 	
-	
+	/*tworzy okno*/
 	private void Frame(JFrame frame, JPanel chartPanel){
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    frame.add(chartPanel, BorderLayout.CENTER);
@@ -214,8 +234,8 @@ public class Chart extends ApplicationFrame
 	    frame.setLocationRelativeTo(null);
 	    frame.setVisible(true);
 	}
-	
-	private JPanel ChartPanel(JFreeChart p, JPanel controlPanel){//p-wykres z konkretnymi parametrami
+	/**/
+	private JPanel ChartPanel(JFreeChart p, JPanel controlPanel){
 		ChartPanel chart = new ChartPanel(p);
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -223,14 +243,15 @@ public class Chart extends ApplicationFrame
 	    panel.add(controlPanel);
 		return panel;
 	}
-	
-	private JPanel XYZChartPanel(JFreeChart p){//p-wykres z konkretnymi parametrami
+	/**/
+	private JPanel XYZChartPanel(JFreeChart p){
 		ChartPanel chart = new ChartPanel(p);
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 	    panel.add(chart);
 		return panel;
 	}
+	/*rusuje wykres (1+1) i XY ZX*/
 	protected void drawChart1Plus1(Model model, int m, double c1, double c2)
 	{ 
 		this.model = model;
@@ -253,6 +274,16 @@ public class Chart extends ApplicationFrame
 
 			bestX.add(model.getBests().get(model.getBests().size()-1).getArgs().getY(), model.getBests().get(model.getBests().size()-1).getArgs().getX());
 			bestZ.add(model.getBests().get(model.getBests().size()-1).getArgs().getY(), model.getBests().get(model.getBests().size()-1).getArgs().getZ());
+			emptyX.add(-20, -20); emptyX.add(20, 20);
+			emptyZ.add(-20, -20); emptyZ.add(20, 20);
+			
+			XYPlot plotX = (XYPlot) chartX.getPlot();
+			XYItemRenderer rendererX = plotX.getRenderer();
+			rendererX.setSeriesVisible(2, false);
+			
+			XYPlot plotZ = (XYPlot) chartZ.getPlot();
+			XYItemRenderer rendererZ = plotZ.getRenderer();
+			rendererZ.setSeriesVisible(2, false);
 			
 			setText("x", model.getBests().get(model.getBests().size()-1).getArgs().getX(), labelx);
 			setText("y", model.getBests().get(model.getBests().size()-1).getArgs().getY(), labely);
@@ -260,6 +291,7 @@ public class Chart extends ApplicationFrame
 			setText("Function", model.getBests().get(model.getBests().size()-1).getFitness(), labelf);
 			labelAlg.setText("m = "+m+",   c1 = "+c1+",   c2 = "+c2);
 	}
+	/*rysuje (mi,lambda) i XY ZY*/
 	protected void drawChartMiLambda(Model model, int gen, int mi, int lambda)
 	{ 
 		this.model = model;
@@ -284,6 +316,16 @@ public class Chart extends ApplicationFrame
 			}
 			bestX.add(model.getPop(gen).get(0).getArgs().getY(), model.getPop(gen).get(0).getArgs().getX());
 			bestZ.add(model.getPop(gen).get(0).getArgs().getY(), model.getPop(gen).get(0).getArgs().getZ());
+			emptyX.add(-20, -20); emptyX.add(20, 20);
+			emptyZ.add(-20, -20); emptyZ.add(20, 20);
+			
+			XYPlot plotX = (XYPlot) chartX.getPlot();
+			XYItemRenderer rendererX = plotX.getRenderer();
+			rendererX.setSeriesVisible(2, false);
+			
+			XYPlot plotZ = (XYPlot) chartZ.getPlot();
+			XYItemRenderer rendererZ = plotZ.getRenderer();
+			rendererZ.setSeriesVisible(2, false);
 			
 			setText("x", model.getBests().get(model.getBests().size()-1).getArgs().getX(), labelx);
 			setText("y", model.getBests().get(model.getBests().size()-1).getArgs().getY(), labely);
@@ -292,6 +334,7 @@ public class Chart extends ApplicationFrame
 			labelg.setText("Generation = "+gen);
 			labelAlg.setText("mi = "+mi+",   lambda = "+lambda);
 	}
+	/*ustawia dla XY i ZY generacje o indeksie gen*/
 	protected void setPopGen(Model model, int gen){
 		this.model = model;
 		bestX.clear();
@@ -305,6 +348,15 @@ public class Chart extends ApplicationFrame
 		}
 		bestX.add(model.getPop(gen).get(0).getArgs().getY(), model.getPop(gen).get(0).getArgs().getX());
 		bestZ.add(model.getPop(gen).get(0).getArgs().getY(), model.getPop(gen).get(0).getArgs().getZ());
+		
+		XYPlot plotX = (XYPlot) chartX.getPlot();
+		XYItemRenderer rendererX = plotX.getRenderer();
+		rendererX.setSeriesVisible(2, false);
+		
+		XYPlot plotZ = (XYPlot) chartZ.getPlot();
+		XYItemRenderer rendererZ = plotZ.getRenderer();
+		rendererZ.setSeriesVisible(2, false);
+		
 		labelg.setText("Generation = "+gen);
 	}
 	protected void setText(String s, double x, JLabel name)
@@ -328,6 +380,7 @@ public class Chart extends ApplicationFrame
 		labelg.setFont(labelg.getFont().deriveFont(font));
 		labelAlg.setFont(labelAlg.getFont().deriveFont(font));
 	}
+	/*do pobierania liczb z pola tekstowego*/
 	int whichGen(int i){
 		 try {	
 			i = Integer.parseInt(whichGen.getText());
@@ -376,4 +429,5 @@ public class Chart extends ApplicationFrame
 		c2.setText("c2");
 		return i;
 	}
+	
 }

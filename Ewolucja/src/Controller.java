@@ -28,24 +28,28 @@ public class Controller extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		/*przycisk (1+1)*/
 		if(e.getSource() == chart.button1){
 			chart.panel.setVisible(false);
 			model = new Model(m, c1, c2);
 			chart.create1Plus1();
 			chart.drawChart1Plus1(model, m, c1, c2);
 		}
+		/*przycisk (mi, labmda)*/
 		if(e.getSource() == chart.button2){
 			chart.panel.setVisible(false);
 			model = new Model(mi, lambda);
 			chart.createMiLambda();
 			chart.drawChartMiLambda(model, i, mi, lambda);
 		}
+		/*przycisk update (mi, lambda)*/
 		if(e.getSource() == chart.bMiLambda){
 			mi = chart.getMi(mi);
 			lambda = chart.getLambda(lambda);
 			chart.updateMiLambda(mi, lambda);
 			chart.drawChartMiLambda(model, i, mi, lambda);
 		}
+		/*przycisk update (1+1)*/
 		if(e.getSource() == chart.b1plus1){
 			m = chart.getM(m);
 			c1 = chart.getC1(c1);
@@ -53,16 +57,19 @@ public class Controller extends JFrame implements ActionListener{
 			chart.update1plus1(m, c1, c2);
 			chart.drawChart1Plus1(model, m, c1, c2);
 		}
+		/*nasteona generacja*/
 		if(e.getSource() == chart.next){
 			i++;
 			if(i >= 100) i = 100;
 			chart.setPopGen(model, i);
 		}
+		/*poprzednia generacja*/
 		if(e.getSource() == chart.prev){
 			i--;
 			if(i <= 0) i = 0;
 			chart.setPopGen(model, i);
 		}
+		/*i-ta generacja*/
 		if(e.getSource() == chart.submit){
 			i = chart.whichGen(i);
 			if(i <= 0) i = 0;
