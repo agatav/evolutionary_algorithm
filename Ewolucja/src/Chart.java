@@ -260,7 +260,7 @@ public class Chart extends ApplicationFrame
 		seriesZ.clear();
 		bestX.clear();
 		bestZ.clear();
-		for (int i=0;i<100;i++)
+		for (int i=0;i<20;i++)
 			{
 				model.addGen();
 			}
@@ -300,7 +300,7 @@ public class Chart extends ApplicationFrame
 		seriesZ.clear();
 		bestX.clear();
 		bestZ.clear();
-		for (int i=0;i<100;i++)
+		for (int i=0;i<50;i++)
 			{
 				model.addGen();
 			}
@@ -331,7 +331,7 @@ public class Chart extends ApplicationFrame
 			setText("y", model.getBests().get(model.getBests().size()-1).getArgs().getY(), labely);
 			setText("z", model.getBests().get(model.getBests().size()-1).getArgs().getZ(), labelz);
 			setText("Function", model.getBests().get(model.getBests().size()-1).getFitness(), labelf);
-			labelg.setText("Generation = "+gen);
+			labelg.setText("Population = "+gen);
 			labelAlg.setText("mi = "+mi+",   lambda = "+lambda);
 	}
 	/*ustawia dla XY i ZY generacje o indeksie gen*/
