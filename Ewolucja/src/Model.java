@@ -25,12 +25,6 @@ public class Model
 		byt1.add(new Population(between,multiplier1,multiplier2,generator));
 	}
 	
-	void start()
-	{
-		addGen();
-		System.out.println("oki - przetestuj :P");
-	}
-	
 	//dodaje generacjÃª
 	public void addGen()
 	{
@@ -85,14 +79,4 @@ public class Model
 		return true;
 		
 	}
-
-	
-	
-	/*public static void main(String[] args)
-	{
-		Model model = new Model(10,1.2,0.8);
-		model.start();
-		
-		return;
-	}*/
 }

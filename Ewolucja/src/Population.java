@@ -114,9 +114,10 @@ public class Population
 	{
 		mi = prev.getMi();
 		lambda = prev.getLambda();
+		
 		milambda = true;
 		
-		// wÂ³aÅ“ciwy algorytm
+		// w³aœciwy algorytm
 		
 	
 		ArrayList<Individual> rodzice = new ArrayList<Individual>();
@@ -126,7 +127,7 @@ public class Population
 		{
 			rodzice.add(prev.getJednostki().get(generator.nextInt(mi)));
 		}
-		//TODO tu ma byÃ¦ czesc algorytmu z indywidual
+		//TODO tu ma byæ czesc algorytmu z indywidual
 		ProjectEvolvingArgs val1,val2,newArgs;
 		double x,y,z,sigmaX,sigmaY,sigmaZ,a;
 		double tau,tauprime;
@@ -192,7 +193,7 @@ public class Population
 		jednostki = new ArrayList<Individual>();
 		milambda = false;
 		
-		// wÂ³aÅ“ciwy algorytm
+		// w³aœciwy algorytm
 		
 		ProjectEvolvingArgs prevArgs = prev.getBest().getArgs();
 		ProjectEvolvingArgs nextArgs;
@@ -228,7 +229,7 @@ public class Population
 		nextArgs = new ProjectEvolvingArgs(x,y,z,sigmaX,sigmaY,sigmaZ);
 		next = new Individual(nextArgs,prev.getBest().getGen()+1);
 		
-		if (prev.getBest().getFitness() > next.getFitness())
+		if (prev.getBest().getFitness() < next.getFitness())
 		{
 			fail++;
 			nextArgs = new ProjectEvolvingArgs(prevArgs.getX(),prevArgs.getY(),prevArgs.getZ(),sigmaX,sigmaY,sigmaZ);
@@ -242,4 +243,3 @@ public class Population
 		jednostki.add(next);
 	}
 }
-

@@ -4,3 +4,4 @@ public interface Evolving<T>
 	T getArgs();
 	Evolving<T> create(T source);
 }
+

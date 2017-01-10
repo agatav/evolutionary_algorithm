@@ -50,4 +50,3 @@ public class ProjectEvolvingArgs implements Cloneable
 		return sigmaZ;
 	}
 }
-
