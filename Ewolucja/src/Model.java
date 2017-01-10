@@ -1,5 +1,3 @@
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -7,92 +5,42 @@ public class Model
 {
 	ArrayList<Population> byt1;
 	Random generator;
-	LineChart chart;
+	boolean milambda;
 	
-	Model()
+	//aktualne dla mi,lambda
+	Model(int mi, int lambda)
 	{
 		generator = new Random();
 		byt1 = new ArrayList<Population>();
-		byt1.add(new Population(generator));
-		
-		chart = new LineChart("Test", "Test"); //nowe okno z wykresem
+		milambda = true;
+		byt1.add(new Population(mi,lambda,generator));
 	}
-	//uzywaj tego - drugi bedzie staly - w tym mozesz ustawic jaki maja byc te wsp�lczynniki z algorytmu <--super komentarz
-	Model(double ratio,double multiplier1, double multiplier2, int mi, int lambda)
+	
+	//aktualne dla 1+1
+	Model(int between, double multiplier1, double multiplier2)
 	{
 		generator = new Random();
 		byt1 = new ArrayList<Population>();
-		byt1.add(new Population(ratio,multiplier1,multiplier2,mi,lambda,generator));
-		
-		chart = new LineChart("Test", "Test"); //nowe okno z wykresem
+		milambda = false;
+		byt1.add(new Population(between,multiplier1,multiplier2,generator));
 	}
 	
-	private void start()
+	void start()
 	{
-		try {
-			PrintWriter zapis = new PrintWriter("wyniki.txt"); 
-			System.out.println(byt1.get(0).getBest().getFitness()); //?
-			zapis.println(byt1.get(0).getBest().getFitness());
-			for (int i=0;i<100;i++)
-			{
-				addGen();
-			}
-			
-			
-			System.out.println("100 generacji");
-			zapis.println("100 generacji");
-			int i=0;
-			for (Evolving<Double> e : getBests())
-			{	
-				System.out.print(i++);
-				zapis.print(i);
-				System.out.println(" " + e.getFitness());
-				zapis.println(" " + e.getFitness());
-				
-				chart.createDataset(i, e.getFitness());//
-			}
-		    
-			System.out.println("cala ostatnia best generacja");
-			zapis.println("cala ostatnia best generacja");
-			
-			System.out.print(getBests().get(getBests().size()-1).getArgs().get(0));//x
-			zapis.print(getBests().get(getBests().size()-1).getArgs().get(0));
-			chart.setText("x", getBests().get(getBests().size()-1).getArgs().get(0), chart.labelx);
-			
-			System.out.print("  ");
-			zapis.print("  ");
-			
-			System.out.print(getBests().get(getBests().size()-1).getArgs().get(1)); //y
-			zapis.print(getBests().get(getBests().size()-1).getArgs().get(1));
-			chart.setText("y", getBests().get(getBests().size()-1).getArgs().get(1), chart.labely);
-			
-			System.out.print("  ");
-			zapis.print("  ");
-			
-			System.out.print(getBests().get(getBests().size()-1).getArgs().get(2));//z
-			zapis.print(getBests().get(getBests().size()-1).getArgs().get(2));
-			chart.setText("z", getBests().get(getBests().size()-1).getArgs().get(2), chart.labelz);
-			System.out.print("  ");
-			zapis.print("  ");
-			
-			System.out.print(getBests().get(getBests().size()-1).getFitness());
-			zapis.print(getBests().get(getBests().size()-1).getFitness());
-			chart.setText("Funkcja", getBests().get(getBests().size()-1).getFitness(), chart.labelf);
-	
-			zapis.close();
-		} catch (IOException e) {}
+		addGen();
+		System.out.println("oki - przetestuj :P");
 	}
 	
-	//dodaje generacje
+	//dodaje generacjê
 	public void addGen()
-	{//TODO using createNewGen()
+	{
 		byt1.add(new Population(generator, byt1.get(byt1.size()-1)));
 	}
 	
-	//zwraca liste najlepszych z generacji
-	public ArrayList<Evolving<Double>> getBests()
+	//zwraca listê najlepszych z generacji
+	public ArrayList<Evolving<ProjectEvolvingArgs>> getBests()
 	{
-		ArrayList<Evolving<Double>> bests = new ArrayList<Evolving<Double>>();
+		ArrayList<Evolving<ProjectEvolvingArgs>> bests = new ArrayList<Evolving<ProjectEvolvingArgs>>();
 		for (Population a : byt1)
 		{
 			bests.add(a.getBest());
@@ -100,8 +48,8 @@ public class Model
 		return bests;
 	}
 	
-	//zwraca 1 generacje - jezeli nie ma to null
-	public ArrayList<Evolving<Double>> getPop(int nr)
+	//zwraca 1 generacjê - jeœli nie ma to null
+	public ArrayList<Evolving<ProjectEvolvingArgs>> getPop(int nr)
 	{
 		if (byt1.size()<=nr)
 			return null;		//jak nie ma takiej generacji to zwraca puste
@@ -110,19 +58,31 @@ public class Model
 	}
 	
 	//zwraca najlepszego w generacji
-	public Evolving<Double> getBest(int nr)
+	public Evolving<ProjectEvolvingArgs> getBest(int nr)
 	{
 		if (byt1.size()<=nr)
 			return null;
 		return byt1.get(nr).getBest();
 	}
-
 	
-	
-	public static void main(String[] args)
+	//zmienia mi i lambde
+	public boolean update(int mi, int lambda)
 	{
-		Model model = new Model();
-		model.start();		
-		return;
+		if(!milambda)
+			return false;
+		byt1.clear();
+		byt1.add(new Population(mi,lambda,generator));
+		return true;
+	}
+	
+	//zmienia m, c1 i c2
+	public boolean update(int between, double multiplier1, double multiplier2)
+	{
+		if(milambda)
+			return false;
+		byt1.clear();
+		byt1.add(new Population(between,multiplier1,multiplier2,generator));
+		return true;
+		
 	}
 }
