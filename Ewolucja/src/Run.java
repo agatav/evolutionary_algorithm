@@ -3,7 +3,6 @@ public class Run {
 		Chart chart = new Chart("test","test");
 		Controller controller = new Controller();
 		controller.addView(chart);
-
 		chart.addController(controller);
 	}
 	

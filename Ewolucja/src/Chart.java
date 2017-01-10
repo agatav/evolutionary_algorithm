@@ -165,14 +165,6 @@ public class Chart extends ApplicationFrame
 	private void CreateFrame(JFreeChart xylineChart, JFreeChart chartX, JFreeChart chartZ, JPanel panel, Controller controller, JButton b, boolean miLambda){
 		  this.controller = controller;
 		  b.addActionListener(controller);
-		  
-	      JPanel textPanel = new JPanel();
-	      textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-	      textPanel.add(labelg);
-	      textPanel.add(labelx);
-	      textPanel.add(labely);
-	      textPanel.add(labelz);
-	      textPanel.add(labelf);
 	      	      
 	      panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 	      
@@ -384,5 +376,4 @@ public class Chart extends ApplicationFrame
 		c2.setText("c2");
 		return i;
 	}
-	
 }
