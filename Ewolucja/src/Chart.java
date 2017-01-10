@@ -33,7 +33,7 @@ public class Chart extends ApplicationFrame
 	JPanel chartPanelMiLambda = new JPanel();
 	JButton button1, button2, bMiLambda, b1plus1, prev, next, submit;
 	
-	/*funkcje na wykresach-> fitness, punkty generacji, punkt najlepszy, empty->ustawia skale wykresu [-20,20]*/
+	/*funkcje na wykresach-> fitness, punkty populacji, punkt najlepszy, empty->ustawia skale wykresu [-20,20]*/
 	final XYSeries fitness = new XYSeries("Fitness"); 
 	final XYSeries seriesX = new XYSeries("XY");
 	final XYSeries seriesZ = new XYSeries("ZY");
@@ -42,7 +42,7 @@ public class Chart extends ApplicationFrame
 	final XYSeries emptyX = new XYSeries("");
 	final XYSeries emptyZ = new XYSeries("");
 
-	/*pola do tekstu x, y, z, funkcji, generacji, parametrow funkcji*/
+	/*pola do tekstu x, y, z, funkcji, populacji, parametrow funkcji*/
 	JLabel labelx = new JLabel("x");
     JLabel labely = new JLabel("y");
     JLabel labelz = new JLabel("z");
@@ -51,8 +51,8 @@ public class Chart extends ApplicationFrame
     JLabel labelAlg = new JLabel("");
 	JLabel labelEmpty = new JLabel(" ");
 	JLabel labelEmpty2 = new JLabel(" ");
-	/*pole do wpisywania generacji i parametrow*/
-    JTextField whichGen, mi, lambda, c1, c2, m;
+	/*pole do wpisywania populacji i parametrow*/
+    JTextField whichPop, mi, lambda, c1, c2, m;
 	
 	Chart(String applicationTitle, String chartTitle)
    {
@@ -104,13 +104,13 @@ public class Chart extends ApplicationFrame
 	private JPanel nextPrevPanel(boolean miLambda, Controller controller){
 		this.controller = controller;
 		if(miLambda){
-			  whichGen = new JTextField("");
-			  whichGen.setPreferredSize(new Dimension( 50, 24 ));
+			  whichPop = new JTextField("");
+			  whichPop.setPreferredSize(new Dimension( 50, 24 ));
 			  JPanel nextPrevPanel = new JPanel();
 		      nextPrevPanel.setLayout(new FlowLayout(2, 15, 5));
 		      nextPrevPanel.add(prev);
 		      nextPrevPanel.add(next);
-		      nextPrevPanel.add(whichGen);
+		      nextPrevPanel.add(whichPop);
 		      nextPrevPanel.add(submit);
 		      prev.addActionListener(controller);
 			  next.addActionListener(controller);
@@ -119,7 +119,7 @@ public class Chart extends ApplicationFrame
 	      }
 		return new JPanel();
 	}
-	/*panel z tekstem - parametry algorytmu, x, y, z, funkcja, generacja*/
+	/*panel z tekstem - parametry algorytmu, x, y, z, funkcja, populacja*/
 	private JPanel textPanel(){
 		JPanel textPanel = new JPanel();
 	      textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
@@ -292,7 +292,7 @@ public class Chart extends ApplicationFrame
 			labelAlg.setText("m = "+m+",   c1 = "+c1+",   c2 = "+c2);
 	}
 	/*rysuje (mi,lambda) i XY ZY*/
-	protected void drawChartMiLambda(Model model, int gen, int mi, int lambda)
+	protected void drawChartMiLambda(Model model, int pop, int mi, int lambda)
 	{ 
 		this.model = model;
 		fitness.clear();
@@ -309,13 +309,13 @@ public class Chart extends ApplicationFrame
 			{				
 				fitness.add(i++, e.getFitness());			
 			}
-			for (Evolving<ProjectEvolvingArgs> e : model.getPop(gen))
+			for (Evolving<ProjectEvolvingArgs> e : model.getPop(pop))
 			{				
 				seriesX.add(e.getArgs().getY(), e.getArgs().getX());
 				seriesZ.add(e.getArgs().getY(), e.getArgs().getZ());
 			}
-			bestX.add(model.getPop(gen).get(0).getArgs().getY(), model.getPop(gen).get(0).getArgs().getX());
-			bestZ.add(model.getPop(gen).get(0).getArgs().getY(), model.getPop(gen).get(0).getArgs().getZ());
+			bestX.add(model.getPop(pop).get(0).getArgs().getY(), model.getPop(pop).get(0).getArgs().getX());
+			bestZ.add(model.getPop(pop).get(0).getArgs().getY(), model.getPop(pop).get(0).getArgs().getZ());
 			emptyX.add(-20, -20); emptyX.add(20, 20);
 			emptyZ.add(-20, -20); emptyZ.add(20, 20);
 			
@@ -331,23 +331,23 @@ public class Chart extends ApplicationFrame
 			setText("y", model.getBests().get(model.getBests().size()-1).getArgs().getY(), labely);
 			setText("z", model.getBests().get(model.getBests().size()-1).getArgs().getZ(), labelz);
 			setText("Function", model.getBests().get(model.getBests().size()-1).getFitness(), labelf);
-			labelg.setText("Generation = "+gen);
+			labelg.setText("Population = "+pop);
 			labelAlg.setText("mi = "+mi+",   lambda = "+lambda);
 	}
-	/*ustawia dla XY i ZY generacje o indeksie gen*/
-	protected void setPopGen(Model model, int gen){
+	/*ustawia dla XY i ZY populacje o indeksie pop*/
+	protected void setPop(Model model, int pop){
 		this.model = model;
 		bestX.clear();
 		bestZ.clear();
 		seriesX.clear();
 		seriesZ.clear();
-		for (Evolving<ProjectEvolvingArgs> e : model.getPop(gen))
+		for (Evolving<ProjectEvolvingArgs> e : model.getPop(pop))
 		{				
 			seriesX.add(e.getArgs().getY(), e.getArgs().getX());
 			seriesZ.add(e.getArgs().getY(), e.getArgs().getZ());
 		}
-		bestX.add(model.getPop(gen).get(0).getArgs().getY(), model.getPop(gen).get(0).getArgs().getX());
-		bestZ.add(model.getPop(gen).get(0).getArgs().getY(), model.getPop(gen).get(0).getArgs().getZ());
+		bestX.add(model.getPop(pop).get(0).getArgs().getY(), model.getPop(pop).get(0).getArgs().getX());
+		bestZ.add(model.getPop(pop).get(0).getArgs().getY(), model.getPop(pop).get(0).getArgs().getZ());
 		
 		XYPlot plotX = (XYPlot) chartX.getPlot();
 		XYItemRenderer rendererX = plotX.getRenderer();
@@ -357,7 +357,7 @@ public class Chart extends ApplicationFrame
 		XYItemRenderer rendererZ = plotZ.getRenderer();
 		rendererZ.setSeriesVisible(2, false);
 		
-		labelg.setText("Generation = "+gen);
+		labelg.setText("Population = "+pop);
 	}
 	protected void setText(String s, double x, JLabel name)
     {          
@@ -381,12 +381,12 @@ public class Chart extends ApplicationFrame
 		labelAlg.setFont(labelAlg.getFont().deriveFont(font));
 	}
 	/*do pobierania liczb z pola tekstowego*/
-	int whichGen(int i){
+	int whichPop(int i){
 		 try {	
-			i = Integer.parseInt(whichGen.getText());
+			i = Integer.parseInt(whichPop.getText());
 		 } catch (NumberFormatException e) {
 	    }
-		whichGen.setText("");
+		whichPop.setText("");
 		return i;
 	}
 	int getMi(int i){

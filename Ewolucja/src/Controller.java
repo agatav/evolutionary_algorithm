@@ -57,24 +57,24 @@ public class Controller extends JFrame implements ActionListener{
 			chart.update1plus1(m, c1, c2);
 			chart.drawChart1Plus1(model, m, c1, c2);
 		}
-		/*nasteona generacja*/
+		/*nasteona populacja*/
 		if(e.getSource() == chart.next){
 			i++;
 			if(i >= 100) i = 100;
-			chart.setPopGen(model, i);
+			chart.setPop(model, i);
 		}
-		/*poprzednia generacja*/
+		/*poprzednia populacja*/
 		if(e.getSource() == chart.prev){
 			i--;
 			if(i <= 0) i = 0;
-			chart.setPopGen(model, i);
+			chart.setPop(model, i);
 		}
-		/*i-ta generacja*/
+		/*i-ta populacja*/
 		if(e.getSource() == chart.submit){
-			i = chart.whichGen(i);
+			i = chart.whichPop(i);
 			if(i <= 0) i = 0;
 			if(i >= 100) i = 100;
-			chart.setPopGen(model, i);
+			chart.setPop(model, i);
 		}
 
 	}
