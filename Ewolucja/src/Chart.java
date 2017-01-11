@@ -26,7 +26,7 @@ public class Chart extends ApplicationFrame
 	
 	Model model;
 	Controller controller;
-	JFreeChart chartX, chartZ;
+	JFreeChart chartX, chartZ, chartF;
 	
 	JFrame frame = new JFrame("Evolution algorithm");
 	JPanel panel = new JPanel();
@@ -52,7 +52,7 @@ public class Chart extends ApplicationFrame
 	JLabel labelEmpty = new JLabel(" ");
 	JLabel labelEmpty2 = new JLabel(" ");
 	/*pole do wpisywania populacji i parametrow*/
-    JTextField whichPop, mi, lambda, c1, c2, m;
+    JTextField whichPop, mi, lambda, c1, c2, m, numberOfPopulation;
 	
 	Chart(String applicationTitle, String chartTitle)
    {
@@ -91,15 +91,6 @@ public class Chart extends ApplicationFrame
 	public void update1plus1(int between, double multiplier1, double multiplier2){
 		if (model.update(between, multiplier1, multiplier2));
 	}
-	
-	public JFreeChart createLineChart(String chartTitle, String x, String y, XYSeries series){
-		final XYSeriesCollection dataset = new XYSeriesCollection();
-	      dataset.addSeries(series);
-	      
-	      JFreeChart xylineChart = ChartFactory.createXYLineChart(//parametry wykresu
-	         chartTitle, x, y, dataset, PlotOrientation.VERTICAL, true, true, false);
-	      return xylineChart;
-	}
 	/*panel z przyciskami next prev*/
 	private JPanel nextPrevPanel(boolean miLambda, Controller controller){
 		this.controller = controller;
@@ -136,7 +127,9 @@ public class Chart extends ApplicationFrame
 	/*pola do wpisywania parametry funkcji*/
 	private JPanel paramPanel(boolean miLambda){
 		JPanel panel = new JPanel();
-		panel.setMaximumSize(new Dimension(300, 30));
+		panel.setMaximumSize(new Dimension(450, 30));
+		numberOfPopulation = new JTextField("population");
+		numberOfPopulation.setPreferredSize(new Dimension(70, 24));
 		if(miLambda){
 			mi = new JTextField("mi");
 			lambda = new JTextField("lambda");
@@ -156,7 +149,8 @@ public class Chart extends ApplicationFrame
 			panel.add(c1);
 			panel.add(c2);
 		}
-	      return panel;
+		panel.add(numberOfPopulation);
+	    return panel;
 	}
 	private void CreateFrame(JFreeChart xylineChart, JFreeChart chartX, JFreeChart chartZ, JPanel panel, Controller controller, JButton b, boolean miLambda){
 		  this.controller = controller;
@@ -194,12 +188,15 @@ public class Chart extends ApplicationFrame
 		  datasetZ.addSeries(emptyZ);
 	      chartZ = ChartFactory.createScatterPlot("", "X", "Y", datasetZ, PlotOrientation.VERTICAL, true, true, false);
 	          
-		CreateFrame(createLineChart("(mi, lambda)", "i", "f(i)", fitness),chartX, chartZ,
-				  		chartPanelMiLambda, controller, bMiLambda, true);
-		frame.add(chartPanelMiLambda, BorderLayout.CENTER);
-		frame.setPreferredSize(new Dimension(800, 750));
-		frame.pack();
-		frame.setLocation(100, 0);
+	      final XYSeriesCollection datasetF = new XYSeriesCollection();
+	      datasetF.addSeries(fitness);
+	      chartF = ChartFactory.createXYLineChart("(mi, lambda)", "population", "fitness", datasetF, PlotOrientation.VERTICAL, true, true, false);
+	      
+		  CreateFrame(chartF,chartX, chartZ, chartPanelMiLambda, controller, bMiLambda, true);
+		  frame.add(chartPanelMiLambda, BorderLayout.CENTER);
+		  frame.setPreferredSize(new Dimension(800, 750));
+		  frame.pack();
+		  frame.setLocation(100, 0);
 		
 	}
 	/*okno z wykresem (1+1)*/
@@ -218,8 +215,11 @@ public class Chart extends ApplicationFrame
 		  datasetZ.addSeries(emptyZ);
 	      chartZ = ChartFactory.createScatterPlot("", "X", "Y", datasetZ, PlotOrientation.VERTICAL, true, true, false);
 	     
-		CreateFrame(createLineChart("(1+1)", "i", "f(i)", fitness), chartX, chartZ,
-				  chartPanelMiLambda, controller, b1plus1, false);
+	      final XYSeriesCollection datasetF = new XYSeriesCollection();
+	      datasetF.addSeries(fitness);
+	      chartF = ChartFactory.createXYLineChart("(1+1)", "population", "fitness", datasetF, PlotOrientation.VERTICAL, true, true, false);
+
+		CreateFrame(chartF, chartX, chartZ, chartPanelMiLambda, controller, b1plus1, false);
 		frame.add(chartPanelMiLambda, BorderLayout.CENTER);
 		frame.setPreferredSize(new Dimension(800, 750));
 		frame.pack();
@@ -252,7 +252,7 @@ public class Chart extends ApplicationFrame
 		return panel;
 	}
 	/*rusuje wykres (1+1) i XY ZX*/
-	protected void drawChart1Plus1(Model model, int m, double c1, double c2)
+	protected void drawChart1Plus1(Model model, int m, double c1, double c2, int numberOfPop)
 	{ 
 		this.model = model;
 		fitness.clear();
@@ -260,7 +260,7 @@ public class Chart extends ApplicationFrame
 		seriesZ.clear();
 		bestX.clear();
 		bestZ.clear();
-		for (int i=0;i<100;i++)
+		for (int i=0; i<numberOfPop; i++)
 			{
 				model.addGen();
 			}
@@ -292,7 +292,7 @@ public class Chart extends ApplicationFrame
 			labelAlg.setText("m = "+m+",   c1 = "+c1+",   c2 = "+c2);
 	}
 	/*rysuje (mi,lambda) i XY ZY*/
-	protected void drawChartMiLambda(Model model, int pop, int mi, int lambda)
+	protected void drawChartMiLambda(Model model, int pop, int mi, int lambda, int numberOfPop)
 	{ 
 		this.model = model;
 		fitness.clear();
@@ -300,7 +300,7 @@ public class Chart extends ApplicationFrame
 		seriesZ.clear();
 		bestX.clear();
 		bestZ.clear();
-		for (int i=0;i<100;i++)
+		for (int i=0; i<numberOfPop; i++)
 			{
 				model.addGen();
 			}
@@ -429,5 +429,12 @@ public class Chart extends ApplicationFrame
 		c2.setText("c2");
 		return i;
 	}
-	
+	int getNumberOfPopulation(int i){
+		 try {	
+			i = Integer.parseInt(numberOfPopulation.getText());
+		 } catch (NumberFormatException e) {
+	    }
+		 numberOfPopulation.setText("population");
+		return i;
+	}	
 }

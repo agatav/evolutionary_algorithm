@@ -8,7 +8,7 @@ public class Controller extends JFrame implements ActionListener{
 	private static final long serialVersionUID = 1L;
 	Model model;
 	Chart chart;
-	int i, mi, lambda, m;
+	int i, mi, lambda, m, numberOfPop;
 	double c1, c2;
 	
 	Controller()
@@ -19,6 +19,7 @@ public class Controller extends JFrame implements ActionListener{
 		m = 10;
 		c1 = 1.2;
 		c2 = 0.8;
+		numberOfPop = 50;
 	}
 
 
@@ -33,34 +34,38 @@ public class Controller extends JFrame implements ActionListener{
 			chart.panel.setVisible(false);
 			model = new Model(m, c1, c2);
 			chart.create1Plus1();
-			chart.drawChart1Plus1(model, m, c1, c2);
+			chart.drawChart1Plus1(model, m, c1, c2, numberOfPop);
 		}
 		/*przycisk (mi, labmda)*/
 		if(e.getSource() == chart.button2){
 			chart.panel.setVisible(false);
 			model = new Model(mi, lambda);
 			chart.createMiLambda();
-			chart.drawChartMiLambda(model, i, mi, lambda);
+			chart.drawChartMiLambda(model, i, mi, lambda, numberOfPop);
 		}
 		/*przycisk update (mi, lambda)*/
 		if(e.getSource() == chart.bMiLambda){
 			mi = chart.getMi(mi);
 			lambda = chart.getLambda(lambda);
+			numberOfPop = chart.getNumberOfPopulation(numberOfPop);
+			if(i >= numberOfPop) i = numberOfPop;
 			chart.updateMiLambda(mi, lambda);
-			chart.drawChartMiLambda(model, i, mi, lambda);
+			chart.drawChartMiLambda(model, i, mi, lambda, numberOfPop);
 		}
 		/*przycisk update (1+1)*/
 		if(e.getSource() == chart.b1plus1){
 			m = chart.getM(m);
 			c1 = chart.getC1(c1);
 			c2 = chart.getC2(c2);
+			numberOfPop = chart.getNumberOfPopulation(numberOfPop);
+			if(i >= numberOfPop) i = numberOfPop;
 			chart.update1plus1(m, c1, c2);
-			chart.drawChart1Plus1(model, m, c1, c2);
+			chart.drawChart1Plus1(model, m, c1, c2, numberOfPop);
 		}
 		/*nasteona populacja*/
 		if(e.getSource() == chart.next){
 			i++;
-			if(i >= 100) i = 100;
+			if(i >= numberOfPop) i = numberOfPop;
 			chart.setPop(model, i);
 		}
 		/*poprzednia populacja*/
@@ -73,7 +78,7 @@ public class Controller extends JFrame implements ActionListener{
 		if(e.getSource() == chart.submit){
 			i = chart.whichPop(i);
 			if(i <= 0) i = 0;
-			if(i >= 100) i = 100;
+			if(i >= numberOfPop) i = numberOfPop;
 			chart.setPop(model, i);
 		}
 

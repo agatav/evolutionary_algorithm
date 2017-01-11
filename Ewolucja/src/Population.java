@@ -11,7 +11,6 @@ public class Population
 	Random generator;
 	int mi, lambda, between;
 	boolean milambda;
-	int fail,success;
 	
 	
 	
@@ -44,11 +43,11 @@ public class Population
 		this.between = between;
 		multiplier1 = m1;
 		multiplier2 = m2;
-		fail = 0;
-		success = 0;
 		jednostki = new ArrayList<Individual>();
-		
-		jednostki.add(new Individual(generator));
+		for(int i=0;i<1;i++)
+		{
+			jednostki.add(new Individual(generator));
+		}
 	}
 	
 	Population(Random generator, Population prev)
@@ -184,62 +183,72 @@ public class Population
 		}
 	}
 	
-	public void createNewGen1Plus1(Population prev)
-	{
+	public void createNewGen1Plus1(Population prev) {
 		multiplier1 = prev.getMulti1();
 		multiplier2 = prev.getMulti2();
 		between = prev.getBetween();
-		double x,y,z,sigmaX,sigmaY,sigmaZ;
+		double x, y, z, sigmaX, sigmaY, sigmaZ;
 		jednostki = new ArrayList<Individual>();
 		milambda = false;
-		
+
 		// w³aœciwy algorytm
-		
+
 		ProjectEvolvingArgs prevArgs = prev.getBest().getArgs();
 		ProjectEvolvingArgs nextArgs;
-		Individual next;
-		
-		
-		x = prevArgs.getX() * prevArgs.getSigmaX()*generator.nextGaussian();
-		y = prevArgs.getY() * prevArgs.getSigmaY()*generator.nextGaussian();
-		z = prevArgs.getZ() * prevArgs.getSigmaZ()*generator.nextGaussian();
-		sigmaX = prevArgs.getSigmaX();
-		sigmaY = prevArgs.getSigmaY();
-		sigmaZ = prevArgs.getSigmaZ();
-		
-		if((prev.getBest().getGen()+1)%between == 0)
-		{
-			double ratio = (double)success / (success + fail);
-			if(ratio > 0.2)
-			{
-				sigmaX = sigmaX*multiplier2;
-				sigmaY = sigmaY*multiplier2;
-				sigmaZ = sigmaZ*multiplier2;
+		int fail;
+		int success;
+		for (Evolving<ProjectEvolvingArgs> e : prev.getPop()) {
+			prevArgs = e.getArgs();
+			Individual next;
+			fail = prevArgs.getFail();
+			success = prevArgs.getSuccess();
+
+
+			x = prevArgs.getX() * (1+ prevArgs.getSigmaX() * generator.nextGaussian());
+			y = prevArgs.getY() * (1+ prevArgs.getSigmaY() * generator.nextGaussian());
+			z = prevArgs.getZ() * (1+ prevArgs.getSigmaZ() * generator.nextGaussian());
+			sigmaX = prevArgs.getSigmaX();
+			sigmaY = prevArgs.getSigmaY();
+			sigmaZ = prevArgs.getSigmaZ();
+
+			if ((prev.getBest().getGen() + 1) % between == 0) {
+				double ratio = (double) success / (success + fail);
+				if (ratio > 0.2) {
+					sigmaX = sigmaX * multiplier2;
+					sigmaY = sigmaY * multiplier2;
+					sigmaZ = sigmaZ * multiplier2;
+				}
+				if (ratio < 0.2) {
+					sigmaX = sigmaX * multiplier1;
+					sigmaY = sigmaY * multiplier1;
+					sigmaZ = sigmaZ * multiplier1;
+				}
+				success = 0;
+				fail = 0;
 			}
-			if(ratio < 0.2)
-			{
-				sigmaX = sigmaX*multiplier1;
-				sigmaY = sigmaY*multiplier1;
-				sigmaZ = sigmaZ*multiplier1;
+
+			nextArgs = new ProjectEvolvingArgs(x, y, z, sigmaX, sigmaY, sigmaZ, success, fail);
+			next = new Individual(nextArgs, prev.getBest().getGen() + 1);
+
+			if (prev.getBest().getFitness() < next.getFitness()) {
+				fail++;
+				nextArgs = new ProjectEvolvingArgs(prevArgs.getX(), prevArgs.getY(), prevArgs.getZ(), sigmaX, sigmaY, sigmaZ, success, fail);
+				next = new Individual(nextArgs, prev.getBest().getGen() + 1);
+			} else {
+				success++;
+				nextArgs = new ProjectEvolvingArgs(x, y, z, sigmaX, sigmaY, sigmaZ, success, fail);
+				next = new Individual(nextArgs, prev.getBest().getGen() + 1);
 			}
-			success = 0;
-			fail = 0;
+
+			jednostki.add(next);
 		}
-		
-		nextArgs = new ProjectEvolvingArgs(x,y,z,sigmaX,sigmaY,sigmaZ);
-		next = new Individual(nextArgs,prev.getBest().getGen()+1);
-		
-		if (prev.getBest().getFitness() < next.getFitness())
+		Collections.sort(jednostki, new Comparator<Individual>()
 		{
-			fail++;
-			nextArgs = new ProjectEvolvingArgs(prevArgs.getX(),prevArgs.getY(),prevArgs.getZ(),sigmaX,sigmaY,sigmaZ);
-			next = new Individual(nextArgs,prev.getBest().getGen()+1);
-		}
-		else
-		{
-			success++;
-		}
-		
-		jednostki.add(next);
+			@Override
+			public int compare(Individual i1, Individual i2)
+			{
+				return Double.compare(i1.getFitness(), i2.getFitness());
+			}
+		});
 	}
 }

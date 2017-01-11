@@ -3,6 +3,7 @@ public class ProjectEvolvingArgs implements Cloneable
 {
 	double x,y,z;
 	double sigmaX,sigmaY,sigmaZ;
+	int success,fail;
 	
 	
 	public ProjectEvolvingArgs(double x, double y, double z, double sigmaX, double sigmaY, double sigmaZ)
@@ -13,6 +14,20 @@ public class ProjectEvolvingArgs implements Cloneable
 		this.sigmaX = sigmaX;
 		this.sigmaY = sigmaY;
 		this.sigmaZ = sigmaZ;
+		success = 0;
+		fail = 0;
+	}
+
+	public ProjectEvolvingArgs(double x, double y, double z, double sigmaX, double sigmaY, double sigmaZ, int success, int fail)
+	{
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.sigmaX = sigmaX;
+		this.sigmaY = sigmaY;
+		this.sigmaZ = sigmaZ;
+		this.success = success;
+		this.fail = fail;
 	}
 	
 	public ProjectEvolvingArgs(double x, double y, double z, double sigma)
@@ -23,6 +38,8 @@ public class ProjectEvolvingArgs implements Cloneable
 		this.sigmaX = sigma;
 		this.sigmaY = sigma;
 		this.sigmaZ = sigma;
+		this.success = 0;
+		this.fail = 0;
 	}
 	
 	public double getX()
@@ -49,4 +66,6 @@ public class ProjectEvolvingArgs implements Cloneable
 	{
 		return sigmaZ;
 	}
+	public int getSuccess() { return success;}
+	public int getFail() {return fail;}
 }
