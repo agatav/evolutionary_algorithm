@@ -1,7 +1,11 @@
+import java.util.ArrayList;
+
 public interface Evolving<T>
 {
 	double getFitness();
 	T getArgs();
-	Evolving<T> create(T source);
+	ArrayList<Double> getArrayArgs();
+	Evolving<T> create(T source,Object sigma);
+	Object getSigma();
 }
 

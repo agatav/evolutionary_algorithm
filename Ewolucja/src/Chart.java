@@ -268,12 +268,12 @@ public class Chart extends ApplicationFrame
 			for (Evolving<ProjectEvolvingArgs> e : model.getBests())
 			{				
 				fitness.add(i++, e.getFitness());	
-				seriesX.add(e.getArgs().getY(), e.getArgs().getX());
-				seriesZ.add(e.getArgs().getY(), e.getArgs().getZ());
+				seriesX.add(e.getArrayArgs().get(1), e.getArrayArgs().get(0));
+				seriesZ.add(e.getArrayArgs().get(1), e.getArrayArgs().get(2));
 			}
 
-			bestX.add(model.getBests().get(model.getBests().size()-1).getArgs().getY(), model.getBests().get(model.getBests().size()-1).getArgs().getX());
-			bestZ.add(model.getBests().get(model.getBests().size()-1).getArgs().getY(), model.getBests().get(model.getBests().size()-1).getArgs().getZ());
+			bestX.add(model.getBests().get(model.getBests().size()-1).getArrayArgs().get(1), model.getBests().get(model.getBests().size()-1).getArrayArgs().get(0));
+			bestZ.add(model.getBests().get(model.getBests().size()-1).getArrayArgs().get(1), model.getBests().get(model.getBests().size()-1).getArrayArgs().get(2));
 			emptyX.add(-20, -20); emptyX.add(20, 20);
 			emptyZ.add(-20, -20); emptyZ.add(20, 20);
 			
@@ -285,9 +285,9 @@ public class Chart extends ApplicationFrame
 			XYItemRenderer rendererZ = plotZ.getRenderer();
 			rendererZ.setSeriesVisible(2, false);
 			
-			setText("x", model.getBests().get(model.getBests().size()-1).getArgs().getX(), labelx);
-			setText("y", model.getBests().get(model.getBests().size()-1).getArgs().getY(), labely);
-			setText("z", model.getBests().get(model.getBests().size()-1).getArgs().getZ(), labelz);
+			setText("x", model.getBests().get(model.getBests().size()-1).getArrayArgs().get(0), labelx);
+			setText("y", model.getBests().get(model.getBests().size()-1).getArrayArgs().get(1), labely);
+			setText("z", model.getBests().get(model.getBests().size()-1).getArrayArgs().get(2), labelz);
 			setText("Function", model.getBests().get(model.getBests().size()-1).getFitness(), labelf);
 			labelAlg.setText("m = "+m+",   c1 = "+c1+",   c2 = "+c2);
 	}
@@ -311,11 +311,11 @@ public class Chart extends ApplicationFrame
 			}
 			for (Evolving<ProjectEvolvingArgs> e : model.getPop(pop))
 			{				
-				seriesX.add(e.getArgs().getY(), e.getArgs().getX());
-				seriesZ.add(e.getArgs().getY(), e.getArgs().getZ());
+				seriesX.add(e.getArrayArgs().get(1), e.getArrayArgs().get(0));
+				seriesZ.add(e.getArrayArgs().get(1), e.getArrayArgs().get(2));
 			}
-			bestX.add(model.getPop(pop).get(0).getArgs().getY(), model.getPop(pop).get(0).getArgs().getX());
-			bestZ.add(model.getPop(pop).get(0).getArgs().getY(), model.getPop(pop).get(0).getArgs().getZ());
+			bestX.add(model.getPop(pop).get(0).getArrayArgs().get(1), model.getPop(pop).get(0).getArrayArgs().get(0));
+			bestZ.add(model.getPop(pop).get(0).getArrayArgs().get(1), model.getPop(pop).get(0).getArrayArgs().get(2));
 			emptyX.add(-20, -20); emptyX.add(20, 20);
 			emptyZ.add(-20, -20); emptyZ.add(20, 20);
 			
@@ -327,9 +327,9 @@ public class Chart extends ApplicationFrame
 			XYItemRenderer rendererZ = plotZ.getRenderer();
 			rendererZ.setSeriesVisible(2, false);
 			
-			setText("x", model.getBests().get(model.getBests().size()-1).getArgs().getX(), labelx);
-			setText("y", model.getBests().get(model.getBests().size()-1).getArgs().getY(), labely);
-			setText("z", model.getBests().get(model.getBests().size()-1).getArgs().getZ(), labelz);
+			setText("x", model.getBests().get(model.getBests().size()-1).getArrayArgs().get(0), labelx);
+			setText("y", model.getBests().get(model.getBests().size()-1).getArrayArgs().get(1), labely);
+			setText("z", model.getBests().get(model.getBests().size()-1).getArrayArgs().get(2), labelz);
 			setText("Function", model.getBests().get(model.getBests().size()-1).getFitness(), labelf);
 			labelg.setText("Population = "+pop);
 			labelAlg.setText("mi = "+mi+",   lambda = "+lambda);
@@ -343,11 +343,11 @@ public class Chart extends ApplicationFrame
 		seriesZ.clear();
 		for (Evolving<ProjectEvolvingArgs> e : model.getPop(pop))
 		{				
-			seriesX.add(e.getArgs().getY(), e.getArgs().getX());
-			seriesZ.add(e.getArgs().getY(), e.getArgs().getZ());
+			seriesX.add(e.getArrayArgs().get(1), e.getArrayArgs().get(0));
+			seriesZ.add(e.getArrayArgs().get(1), e.getArrayArgs().get(2));
 		}
-		bestX.add(model.getPop(pop).get(0).getArgs().getY(), model.getPop(pop).get(0).getArgs().getX());
-		bestZ.add(model.getPop(pop).get(0).getArgs().getY(), model.getPop(pop).get(0).getArgs().getZ());
+		bestX.add(model.getPop(pop).get(0).getArrayArgs().get(1), model.getPop(pop).get(0).getArrayArgs().get(0));
+		bestZ.add(model.getPop(pop).get(0).getArrayArgs().get(1), model.getPop(pop).get(0).getArrayArgs().get(2));
 		
 		XYPlot plotX = (XYPlot) chartX.getPlot();
 		XYItemRenderer rendererX = plotX.getRenderer();
