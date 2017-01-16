@@ -1,47 +1,27 @@
+import java.util.ArrayList;
 
 public class ProjectEvolvingArgs implements Cloneable
 {
-	double x,y,z;
-	double sigmaX,sigmaY,sigmaZ;
-	int success,fail;
+	ArrayList<Double> args;
 	
 	
-	public ProjectEvolvingArgs(double x, double y, double z, double sigmaX, double sigmaY, double sigmaZ)
+	public ProjectEvolvingArgs(double x, double y, double z)
 	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.sigmaX = sigmaX;
-		this.sigmaY = sigmaY;
-		this.sigmaZ = sigmaZ;
-		success = 0;
-		fail = 0;
+		args = new ArrayList<Double>();
+		args.add(x);
+		args.add(y);
+		args.add(z);
 	}
-
-	public ProjectEvolvingArgs(double x, double y, double z, double sigmaX, double sigmaY, double sigmaZ, int success, int fail)
+	public ProjectEvolvingArgs(ArrayList<Double> a)
 	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.sigmaX = sigmaX;
-		this.sigmaY = sigmaY;
-		this.sigmaZ = sigmaZ;
-		this.success = success;
-		this.fail = fail;
+		args = new ArrayList<Double>();
+		for(Double e: a)
+		{
+			Double z = new Double(e);
+			args.add(z);
+		}
 	}
-	
-	public ProjectEvolvingArgs(double x, double y, double z, double sigma)
-	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.sigmaX = sigma;
-		this.sigmaY = sigma;
-		this.sigmaZ = sigma;
-		this.success = 0;
-		this.fail = 0;
-	}
-	
+	/* OLD
 	public double getX()
 	{
 		return x;
@@ -67,5 +47,16 @@ public class ProjectEvolvingArgs implements Cloneable
 		return sigmaZ;
 	}
 	public int getSuccess() { return success;}
-	public int getFail() {return fail;}
+	public int getFail() {return fail;}	
+	 */
+	public ArrayList<Double> getArgs()
+	{
+		ArrayList<Double> zwrot = new ArrayList<Double>();
+		for (Double e: args)
+		{
+			Double a = new Double(e);
+			zwrot.add(a);
+		}
+		return zwrot;
+	}
 }
