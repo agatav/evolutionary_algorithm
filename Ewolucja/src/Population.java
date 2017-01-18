@@ -27,7 +27,6 @@ public class Population implements Runnable
 			sigma.add(generator.nextDouble() *3);			
 			jednostki.add(new Individual(generator,sigma));
 		}
-		//System.out.println("stworzono jednostki");
 
 		Collections.sort(jednostki, new Comparator<Individual>()
 				{
@@ -112,10 +111,7 @@ public class Population implements Runnable
 		lambda = prev.getLambda();
 		
 		milambda = true;
-		
-		// w³aœciwy algorytm
-		
-	
+
 		ArrayList<Individual> rodzice = new ArrayList<Individual>();
 		jednostki = new ArrayList<Individual>();
 				
@@ -125,7 +121,6 @@ public class Population implements Runnable
 		}
 		
 		Individual val1,val2;
-		//ProjectEvolvingArgs newArgsContener;
 		ArrayList<Double> sigma,newArgs;
 		double x,y,z,sigmaX,sigmaY,sigmaZ,a;
 		double tau,tauprime;
@@ -165,32 +160,11 @@ public class Population implements Runnable
 	
 				newArgs.add(temp_v);
 				sigma.add(temp_s);
-				//newArgsContener = new ProjectEvolvingArgs(newArgs);
 			}
 			jednostki.add(new Individual(newArgs,currgen+1,sigma));
 
-			/*
-			x = a*val1.getX() + (1-a)*val2.getX();
-			y = a*val1.getY() + (1-a)*val2.getY();
-			z = a*val1.getZ() + (1-a)*val2.getZ();
-			
-			sigmaX = a*val1.getSigmaX() + (1-a)*val2.getSigmaX();
-			sigmaY = a*val1.getSigmaY() + (1-a)*val2.getSigmaY();
-			sigmaZ = a*val1.getSigmaZ() + (1-a)*val2.getSigmaZ();
-			
-			sigmaX = sigmaX*Math.exp(tau*generator.nextGaussian() + tauprime*generator.nextGaussian());
-			sigmaY = sigmaY*Math.exp(tau*generator.nextGaussian() + tauprime*generator.nextGaussian());
-			sigmaZ = sigmaZ*Math.exp(tau*generator.nextGaussian() + tauprime*generator.nextGaussian());
-		
-			x = x + sigmaX*generator.nextGaussian();
-			y = y + sigmaY*generator.nextGaussian();
-			z = z + sigmaZ*generator.nextGaussian();
-			
-			newArgs = new ProjectEvolvingArgs(x,y,z);
-			jednostki.add(new Individual(newArgs,currgen+1,sigma));*/
 		}
-			
-		//endTODO
+
 		Collections.sort(jednostki, new Comparator<Individual>()
 		{
 			@Override
@@ -205,75 +179,7 @@ public class Population implements Runnable
 			jednostki.remove(mi);
 		}
 	}
-	
-	/*public void createNewGen1Plus1(Population prev) {
-		multiplier1 = prev.getMulti1();
-		multiplier2 = prev.getMulti2();
-		between = prev.getBetween();
-		double x, y, z, sigmaX, sigmaY, sigmaZ;
-		jednostki = new ArrayList<Individual>();
-		milambda = false;
 
-		// w³aœciwy algorytm
-
-		ProjectEvolvingArgs prevArgs = prev.getBest().getArgs();
-		ProjectEvolvingArgs nextArgs;
-		int fail;
-		int success;
-		for (Evolving<ProjectEvolvingArgs> e : prev.getPop()) {
-			prevArgs = e.getArgs();
-			Individual next;
-			fail = prevArgs.getFail();
-			success = prevArgs.getSuccess();
-
-
-			x = prevArgs.getX() * (1+ prevArgs.getSigmaX() * generator.nextGaussian());
-			y = prevArgs.getY() * (1+ prevArgs.getSigmaY() * generator.nextGaussian());
-			z = prevArgs.getZ() * (1+ prevArgs.getSigmaZ() * generator.nextGaussian());
-			sigmaX = prevArgs.getSigmaX();
-			sigmaY = prevArgs.getSigmaY();
-			sigmaZ = prevArgs.getSigmaZ();
-
-			if ((prev.getBest().getGen() + 1) % between == 0) {
-				double ratio = (double) success / (success + fail);
-				if (ratio > 0.2) {
-					sigmaX = sigmaX * multiplier2;
-					sigmaY = sigmaY * multiplier2;
-					sigmaZ = sigmaZ * multiplier2;
-				}
-				if (ratio < 0.2) {
-					sigmaX = sigmaX * multiplier1;
-					sigmaY = sigmaY * multiplier1;
-					sigmaZ = sigmaZ * multiplier1;
-				}
-				success = 0;
-				fail = 0;
-			}
-
-			nextArgs = new ProjectEvolvingArgs(x, y, z, sigmaX, sigmaY, sigmaZ, success, fail);
-			next = new Individual(nextArgs, prev.getBest().getGen() + 1);
-
-			if (prev.getBest().getFitness() < next.getFitness()) {
-				fail++;
-				nextArgs = new ProjectEvolvingArgs(prevArgs.getX(), prevArgs.getY(), prevArgs.getZ(), sigmaX, sigmaY, sigmaZ, success, fail);
-				next = new Individual(nextArgs, prev.getBest().getGen() + 1);
-			} else {
-				success++;
-				nextArgs = new ProjectEvolvingArgs(x, y, z, sigmaX, sigmaY, sigmaZ, success, fail);
-				next = new Individual(nextArgs, prev.getBest().getGen() + 1);
-			}
-
-			jednostki.add(next);
-		}
-		Collections.sort(jednostki, new Comparator<Individual>()
-		{
-			@Override
-			public int compare(Individual i1, Individual i2)
-			{
-				return Double.compare(i1.getFitness(), i2.getFitness());
-			}
-		});
-	}*/
 	public void run()
 	{
 		long stopTime = System.currentTimeMillis() + 2000;

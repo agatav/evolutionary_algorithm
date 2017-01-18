@@ -21,34 +21,7 @@ public class ProjectEvolvingArgs implements Cloneable
 			args.add(z);
 		}
 	}
-	/* OLD
-	public double getX()
-	{
-		return x;
-	}
-	public double getY()
-	{
-		return y;
-	}
-	public double getZ()
-	{
-		return z;
-	}
-	public double getSigmaX()
-	{
-		return sigmaX;
-	}
-	public double getSigmaY()
-	{
-		return sigmaY;
-	}
-	public double getSigmaZ()
-	{
-		return sigmaZ;
-	}
-	public int getSuccess() { return success;}
-	public int getFail() {return fail;}	
-	 */
+
 	public ArrayList<Double> getArgs()
 	{
 		ArrayList<Double> zwrot = new ArrayList<Double>();

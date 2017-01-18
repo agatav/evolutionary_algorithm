@@ -19,12 +19,6 @@ public class Individual implements Evolving<ProjectEvolvingArgs>
 		double x = generator.nextDouble() * 40 - 20;
 		double y = generator.nextDouble() * 40 - 20;
 		double z = generator.nextDouble() * 40 - 20;
-		/*
-		double sigma[] = new double[3];
-		sigma[0] = generator.nextDouble() *3;
-		sigma[1] = generator.nextDouble() *3;
-		sigma[2] = generator.nextDouble() *3;
-		*/
 		generacja = 0;
 		args = new ProjectEvolvingArgs(x,y,z);
 		fitness = fitnessCalc();
@@ -64,20 +58,6 @@ public class Individual implements Evolving<ProjectEvolvingArgs>
 		}
 		return kara;
 	}
-	/*
-	public	double getX()
-	{
-		return args.getX();
-	}
-	public double getY()
-	{
-		return args.getY();
-	}
-	public double getZ()
-	{
-		return args.getZ();
-	}
-	*/
 	
 	public double getFitness()
 	{

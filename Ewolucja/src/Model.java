@@ -25,14 +25,14 @@ public class Model
 		byt1.add(new Population(between,multiplier1,multiplier2,generator));
 	}
 	
-	//dodaje generacjĂ�ÂŞ
+	//dodaje generacje
 	public void addGen()
 	{
 		if(milambda)
 			byt1.add(new Population(generator, byt1.get(byt1.size()-1)));
 	}
 	
-//zwraca listĂŞ najlepszych z generacji
+	//zwraca liste najlepszych z generacji
 	public ArrayList<Evolving<ProjectEvolvingArgs>> getBests()
 	{
 		ArrayList<Evolving<ProjectEvolvingArgs>> bests = new ArrayList<Evolving<ProjectEvolvingArgs>>();
@@ -47,11 +47,11 @@ public class Model
 		return bests;
 	}
 	
-//zwraca 1 generacjĂŞ - jeĹ“li nie ma to null
+	//zwraca 1 generacje - jesli nie ma to null
 	public ArrayList<Evolving<ProjectEvolvingArgs>> getPop(int nr)
 	{
 		if (byt1.size()<=nr)
-			return null;		//jak nie ma takiej generacji to zwraca puste
+			return null;
 		return byt1.get(nr).getPop();
 		
 	}
