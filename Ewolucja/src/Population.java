@@ -211,16 +211,16 @@ public class Population implements Runnable
 				argumenty.add(new Double(e * (1 + sigma * generator.nextGaussian())));
 			}
 			
-			if(i+1 % between == 0)
+			if((i+1) % between == 0)
 			{
 				double ratio = (double) success / (success + fail);
 				if (ratio > 0.2) 
 				{
-						sigma = sigma * multiplier2;
-				}
-				if (ratio < 0.2) 
-				{
 						sigma = sigma * multiplier1;
+				}
+				if (ratio <= 0.2) 
+				{
+						sigma = sigma * multiplier2;
 				}
 				success = 0;
 				fail = 0;
@@ -239,8 +239,9 @@ public class Population implements Runnable
 				fail++;
 			}
 			i++;
-			if (i>100)
+			if (i>10000)
 			{
+				System.out.println("przerwane, za du¿o ");
 				break;
 			}
 		}
